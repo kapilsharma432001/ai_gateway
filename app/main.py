@@ -19,6 +19,7 @@ async def service_unavailable_handler(request: Request, exc: litellm.APIConnecti
         content = {"error": "LLM Provider is unavailable. Please try again later."}
     )
 
+# if user is sending too many requests, we catch that here
 @app.exception_handler(litellm.RateLimitError)
 async def rate_limit_handler(request: Request, exc: litellm.RateLimitError):
     return JSONResponse(
