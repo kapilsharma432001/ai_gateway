@@ -1,16 +1,30 @@
-from fastapi import FastAPI, HTTPException
+import litellm
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from app.services.llm_service import get_llm_response
+from app.schemas import ChatRequest
 
 load_dotenv()
 
 app = FastAPI(title = "AI Gateway", version = "0.1.0")
 
-class ChatRequest(BaseModel):
-    prompt: str
-    model: str = "gpt-4o-mini"
+# Global exception handler
+# This wrapper catches any error from from LiteLLM across the entire app
+@app.exception_handler(litellm.APIConnectionError)
+async def service_unavailable_handler(request: Request, exc: litellm.APIConnectionError):
+    return JSONResponse(
+        status_code = 503,
+        content = {"error": "LLM Provider is unavailable. Please try again later."}
+    )
 
+@app.exception_handler(litellm.RateLimitError)
+async def rate_limit_handler(request: Request, exc: litellm.RateLimitError):
+    return JSONResponse(
+        status_code = 429,
+        content = {"error": "LLM Proider rate limit exceeded", "detail": "we are sending too many requests to OpenAI"}
+    )
 
 # Endpoint
 @app.post("/v1/chat")
