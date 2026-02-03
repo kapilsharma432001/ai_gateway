@@ -15,8 +15,17 @@ async def get_llm_response(message: str, model: str = "gpt-4o-mini"):
             api_key = os.getenv("OPENAI_API_KEY")
         )
 
-        # Extract just the text content from the response
-        return response.choices[0].message.content
+        # capture the cost data
+        usage = response.usage
+
+        return {
+            "content": response.choices[0].message.content,
+            "usage": {
+                "prompt_tokens": usage.prompt_tokens,
+                "completion_tokens": usage.completion_tokens,
+                "total_tokens": usage.total_tokens,
+            }
+        }
     
     except Exception as e:
         return f"Error communicating with LLM: {str(e)}"
