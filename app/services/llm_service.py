@@ -18,7 +18,6 @@ async def get_llm_response(message: str, model: str = "gpt-4o-mini"):
         # capture the cost data
         usage = response.usage
 
-        # Extract just the text content from the response
         return {
             "content": response.choices[0].message.content,
             "usage": {
