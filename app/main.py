@@ -13,7 +13,7 @@ from app.schemas import ChatRequest
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ai_gateway")
 
-load_dotenv()
+# load_dotenv()
 
 app = FastAPI(title = "AI Gateway", version = "0.1.0")
 

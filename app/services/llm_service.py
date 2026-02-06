@@ -1,5 +1,5 @@
 from litellm import acompletion
-import os
+from app.config import settings
 
 # LiteLLM is stateless, we just pass the key and the model string, we don't need to create a client object
 
@@ -12,7 +12,7 @@ async def get_llm_response(message: str, model: str = "gpt-4o-mini"):
         response = await acompletion(
             model = model,
             messages = [{"role": "user", "content": message}],
-            api_key = os.getenv("OPENAI_API_KEY")
+            api_key = settings.openai_api_key,
         )
 
         # capture the cost data
